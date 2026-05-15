@@ -1,7 +1,7 @@
 # Iron Clad Justice — Template Rules
 # FROZEN ELEMENTS: Do not change without explicit approval
 
-Last Updated: 2026-05-12
+Last Updated: 2026-05-15
 
 ---
 
@@ -102,13 +102,24 @@ body { font-family: 'Inter', system-ui, sans-serif; }
 
 These fields must be present exactly as shown. Values differ per page.
 
+### Standard hidden field set (all new cases)
+```html
+<input type="hidden" name="lead_token" value="[case-specific token]">
+<input type="hidden" name="traffic_source_id" value="1">
+<input type="hidden" name="campaign_name" value="[case-slug]">
+<input type="hidden" name="affid" value="810">
+<input type="hidden" name="ip_address" id="data_ip_address">
+<input type="hidden" name="xxtrustedformcerturl" value="xxTrustedFormCertUrl">
+```
+
+**NEVER** add `<input type="hidden" name="caller_id" ...>` — the static phone number field was removed 2026-05-15. The phone number entered by the user is submitted via `name="caller_id"` on the visible tel input.
+
 ### TALCUM (`ironcladjustice-talcum`)
 ```html
 <input type="hidden" name="lead_token" value="1fea3c19e23d45929d40aaaa58b666e8">
-<input type="hidden" name="traffic_source_id" value="1021">
+<input type="hidden" name="traffic_source_id" value="1">
 <input type="hidden" name="campaign_name" value="talcum-powder-claims">
 <input type="hidden" name="affid" value="810">
-<input type="hidden" name="caller_id" value="+17194452211">
 <input type="hidden" name="ip_address" id="data_ip_address">
 <input type="hidden" name="xxtrustedformcerturl" value="xxTrustedFormCertUrl">
 <input type="hidden" name="diagnosis" value="yes">
@@ -119,10 +130,9 @@ These fields must be present exactly as shown. Values differ per page.
 ### HAIR (`ironcladjustice-hair`)
 ```html
 <input type="hidden" name="lead_token" value="a9c3d3905c08411fa5598595bc5e425f">
-<input type="hidden" name="traffic_source_id" value="1021">
+<input type="hidden" name="traffic_source_id" value="1">
 <input type="hidden" name="campaign_name" value="talcum-powder-claims">
 <input type="hidden" name="affid" value="810">
-<input type="hidden" name="caller_id" value="+17194452211">
 <input type="hidden" name="diagnosis" value="yes">
 <input type="hidden" name="proof" value="yes">
 <input type="hidden" name="dl" value="yes">
@@ -247,26 +257,35 @@ The checkbox must be `required`. The legal text is frozen — do not paraphrase 
 
 ---
 
-## 11. FORM SUBMIT REDIRECT (TALCUM only — frozen)
+## 11. FORM SUBMIT HANDLER (ALL CASE PAGES — frozen pattern)
 
-Talcum page has a post-submit redirect. Hair does not. Do not add/remove without confirming against live site.
+All case pages use a `fetch()`-based submit handler. The form POSTs to TrackDrive, logs the success/false response to console, then redirects to the ICJ thank you page regardless of outcome.
 
 ```html
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         const form = document.getElementById('lead-form');
-        form.addEventListener('submit', function(e) {
+        form.addEventListener('submit', async function(e) {
+            e.preventDefault();
             const btn = form.querySelector('button[type="submit"]');
-            const originalText = btn.innerHTML;
             btn.disabled = true;
             btn.innerHTML = 'Submitting...';
-            setTimeout(() => {
-                window.location.href = 'https://thankyou.caseclaimnetwork.com/';
-            }, 800);
+            try {
+                const res = await fetch(form.action, { method: 'POST', body: new FormData(form) });
+                const result = await res.json();
+                console.log('TrackDrive result:', JSON.stringify(result));
+            } catch(err) {
+                console.log('Submission error:', err);
+            }
+            window.location.href = 'https://thankyou.ironcladjustice.com/';
         });
     });
 </script>
 ```
+
+Pages with full validation (wildfire, afff, and any new cases) use the extended version with field-level error display — see those pages for the full pattern. The redirect target is always `https://thankyou.ironcladjustice.com/`.
+
+**NEVER** redirect to `https://thankyou.caseclaimnetwork.com/` — that URL was replaced 2026-05-15.
 
 ---
 
@@ -326,6 +345,7 @@ Talcum page has a post-submit redirect. Hair does not. Do not add/remove without
 | hair.ironcladjustice.com | `ironcladjustice-main/hair/` | ironcladjustice-hair | `hair` |
 | depo.ironcladjustice.com | `ironcladjustice-main/depo/` | ironcladjustice-depo | `depo` |
 | wildfire.ironcladjustice.com | `ironcladjustice-main/wildfire/` | ironcladjustice-wildfire | `wildfire` |
+| thankyou.ironcladjustice.com | `ironcladjustice-main/thankyou/` | ironcladjustice-thankyou | `thankyou` |
 | privacy.ironcladjustice.com | `ironcladjustice-main/privacy/` | ironcladjustice-privacy | `privacy` |
 | terms.ironcladjustice.com | `ironcladjustice-main/terms/` | ironcladjustice-terms | `terms` |
 

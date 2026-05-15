@@ -5,18 +5,23 @@
 
 ## How to Start a Clean Session
 
-At the beginning of any new Claude session, paste this exact message:
+**Step 1 — Find and sync your local workspace.** At the beginning of any new Claude session, paste this exact message:
 
 ```
-Please read the following files before we begin:
-- /Users/richconnelly/Desktop/CLAUDE WORKSPACE/ironcladjustice-deploy/WORKFLOW_TEMPLATE.md
-- /Users/richconnelly/Desktop/CLAUDE WORKSPACE/ironcladjustice-deploy/TEMPLATE_RULES.md
-- /Users/richconnelly/Desktop/CLAUDE WORKSPACE/ironcladjustice-deploy/OPERATIONS_SOP.md
+Find the ironcladjustice-deploy directory on this machine (it lives somewhere inside a "CLAUDE WORKSPACE" folder), then run `git pull origin main` to sync the latest from GitHub. Set that path as $ICJ_WORKSPACE for this session.
 
-Then confirm you are ready to begin a new case launch.
+Then read the following files:
+- $ICJ_WORKSPACE/WORKFLOW_TEMPLATE.md
+- $ICJ_WORKSPACE/TEMPLATE_RULES.md
+- $ICJ_WORKSPACE/OPERATIONS_SOP.md
+- $ICJ_WORKSPACE/CASE_LAUNCH_GUIDE.md
+
+Confirm you are ready to begin.
 ```
 
-Claude will read all three files and confirm. Everything it needs to run the workflow correctly is in those documents. You do not need to re-explain the process.
+This works from any machine regardless of where the folder lives. GitHub is the source of truth — the pull ensures you have the latest docs, templates, and site files before starting.
+
+**First time on a new machine?** See the one-time machine setup at the bottom of this file.
 
 ---
 
@@ -183,7 +188,7 @@ Claude will: unpause the buyer, submit a test lead, and confirm the full lead fl
 
 ## File Locations (for reference)
 
-All operational docs live in: `/Users/richconnelly/Desktop/CLAUDE WORKSPACE/ironcladjustice-deploy/`  
+All operational docs live in: `$ICJ_WORKSPACE/`  
 Also pushed to GitHub: `github.com/atumcaseclaim/ironcladjustice-main`
 
 | File | Purpose |
@@ -193,4 +198,27 @@ Also pushed to GitHub: `github.com/atumcaseclaim/ironcladjustice-main`
 | `OPERATIONS_SOP.md` | Scope rules, trigger keywords, approval gates |
 | `CASE_LAUNCH_GUIDE.md` | This file — team-facing step-by-step |
 | `CASE_TEMPLATE/index.html` | Master HTML template for all new case pages |
-| `Form field template - default contact fields.csv` | Default TrackDrive contact fields for every offer |
+| `default-contact-fields.csv` | Default TrackDrive contact fields for every offer |
+
+---
+
+## One-Time Machine Setup (new machine only)
+
+Do this once when setting up a new computer. Not needed each session.
+
+```bash
+# 1. Create the workspace folder wherever you want it
+mkdir -p ~/Desktop/CLAUDE\ WORKSPACE
+
+# 2. Clone the monorepo into it
+cd ~/Desktop/CLAUDE\ WORKSPACE
+git clone https://github.com/atumcaseclaim/ironcladjustice-main.git ironcladjustice-deploy
+
+# 3. Verify
+ls ironcladjustice-deploy/
+# Should show: www/ wildfire/ talcum/ hair/ depo/ privacy/ terms/ CASE_TEMPLATE/ *.md
+```
+
+After this, the session startup prompt works automatically — Claude will find `ironcladjustice-deploy` inside `CLAUDE WORKSPACE` regardless of the full path.
+
+**Note on git push:** Pushing requires GitHub access. If your machine isn't authenticated, Claude will prompt you for a PAT when it tries to push a new case. Generate a short-lived one at github.com/settings/tokens (`repo` scope), use it for the push, then revoke it.

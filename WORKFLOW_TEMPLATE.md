@@ -161,7 +161,7 @@ grep -n "\[" index.html | grep -v "<!--\|//\|focus:\|hover:\|border-\["
 
 ```bash
 GITHUB_TOKEN="[PAT]"
-BASE="/Users/richconnelly/Desktop/CLAUDE WORKSPACE/ironcladjustice-deploy"
+BASE="$ICJ_WORKSPACE"
 
 # Create new subdirectory for the case
 mkdir -p "${BASE}/[slug]/images"

@@ -188,15 +188,15 @@ Once selected:
 # Replace [case] with the short case identifier (e.g., roundup, cpap, hernia)
 export CASE="[case]"
 
-cp -r /Users/richconnelly/Desktop/CLAUDE WORKSPACE/ironcladjustice-deploy/CASE_TEMPLATE \
-      /Users/richconnelly/Desktop/CLAUDE WORKSPACE/ironcladjustice-deploy/ironcladjustice-${CASE}
+cp -r $ICJ_WORKSPACE/CASE_TEMPLATE \
+      $ICJ_WORKSPACE/ironcladjustice-${CASE}
 ```
 
 ---
 
 ## Step 2 — Fill In All Placeholders
 
-Open `/Users/richconnelly/Desktop/CLAUDE WORKSPACE/ironcladjustice-deploy/ironcladjustice-${CASE}/index.html` and replace every `[BRACKET]` placeholder:
+Open `$ICJ_WORKSPACE/ironcladjustice-${CASE}/index.html` and replace every `[BRACKET]` placeholder:
 
 | Placeholder | What to Replace With |
 |-------------|----------------------|
@@ -215,7 +215,7 @@ Open `/Users/richconnelly/Desktop/CLAUDE WORKSPACE/ironcladjustice-deploy/ironcl
 
 **Verify no placeholders remain:**
 ```bash
-grep -n "\[" /Users/richconnelly/Desktop/CLAUDE WORKSPACE/ironcladjustice-deploy/ironcladjustice-${CASE}/index.html
+grep -n "\[" $ICJ_WORKSPACE/ironcladjustice-${CASE}/index.html
 ```
 This should return zero results before proceeding.
 
@@ -228,7 +228,7 @@ Copy the case image into the images directory:
 ```bash
 # Image should be JPG, ~800x500px
 cp /path/to/your/image.jpg \
-   /Users/richconnelly/Desktop/CLAUDE WORKSPACE/ironcladjustice-deploy/ironcladjustice-${CASE}/images/[CASE_IMAGE_FILENAME]
+   $ICJ_WORKSPACE/ironcladjustice-${CASE}/images/[CASE_IMAGE_FILENAME]
 ```
 
 > Note: If the Vercel project serves from the repo root, the image path `/images/filename.jpg` needs to be in the same repo. Alternatively, host images in the main repo and use an absolute URL.
@@ -240,7 +240,7 @@ cp /path/to/your/image.jpg \
 Open the file in a browser before committing:
 
 ```bash
-open /Users/richconnelly/Desktop/CLAUDE WORKSPACE/ironcladjustice-deploy/ironcladjustice-${CASE}/index.html
+open $ICJ_WORKSPACE/ironcladjustice-${CASE}/index.html
 ```
 
 Check:
@@ -258,7 +258,7 @@ Check:
 All ICJ sites live in `atumcaseclaim/ironcladjustice-main`. No new repo is created per case.
 
 ```bash
-BASE="/Users/richconnelly/Desktop/CLAUDE WORKSPACE/ironcladjustice-deploy"
+BASE="$ICJ_WORKSPACE"
 
 # Create the case subdirectory and copy in the built files
 mkdir -p "${BASE}/${CASE}/images"
@@ -395,12 +395,12 @@ Vercel will show `"verified": true` once the CNAME resolves. DNS propagation typ
 
 ## Step 10 — Add Case Link to Homepage
 
-Open `/Users/richconnelly/Desktop/CLAUDE WORKSPACE/ironcladjustice-deploy/index.html` and add the new case to the case cards section. Follow the same pattern as the existing talcum/hair/depo cards.
+Open `$ICJ_WORKSPACE/index.html` and add the new case to the case cards section. Follow the same pattern as the existing talcum/hair/depo cards.
 
 Then deploy the homepage update:
 
 ```bash
-cd /Users/richconnelly/Desktop/CLAUDE WORKSPACE/ironcladjustice-deploy
+cd $ICJ_WORKSPACE
 git add index.html
 git commit -m "Add ${CASE} case link to homepage"
 git push origin main

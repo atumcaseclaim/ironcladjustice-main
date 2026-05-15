@@ -7,7 +7,7 @@
 
 All ICJ pages are deployed via GitHub → Vercel auto-deploy. Pushing to the `main` branch of any repo automatically triggers a Vercel rebuild — no manual redeploy needed.
 
-**Local repo location:** `/Users/richconnelly/Desktop/CLAUDE WORKSPACE/ironcladjustice-deploy/`
+**Local repo location:** `$ICJ_WORKSPACE/`
 
 | Subfolder | Live Domain |
 |-----------|-------------|
@@ -59,7 +59,7 @@ All files are plain HTML. Open in any text editor.
 
 ```bash
 # Example: editing the talcum page
-open /Users/richconnelly/Desktop/CLAUDE WORKSPACE/ironcladjustice-deploy/ironcladjustice-talcum/index.html
+open $ICJ_WORKSPACE/ironcladjustice-talcum/index.html
 ```
 
 Or use Claude Code for guided edits.
@@ -76,7 +76,7 @@ If a design change needs to go across all case pages (e.g., updating the attenti
 Use grep to confirm consistency:
 ```bash
 # Example: verify all pages have the correct red left border
-grep -r "border-left:6px solid #dc2626" /Users/richconnelly/Desktop/CLAUDE WORKSPACE/ironcladjustice-deploy/
+grep -r "border-left:6px solid #dc2626" $ICJ_WORKSPACE/
 ```
 
 ### 2.3 Validate before deploying
@@ -96,7 +96,7 @@ Open the file in a browser and check:
 ### 3.1 Deploy a single page
 
 ```bash
-cd /Users/richconnelly/Desktop/CLAUDE WORKSPACE/ironcladjustice-deploy/ironcladjustice-[page]
+cd $ICJ_WORKSPACE/ironcladjustice-[page]
 
 git add index.html
 git commit -m "Design: [brief description of what changed]"
@@ -117,15 +117,15 @@ Deploy each page in sequence. Wait for each to confirm before moving to the next
 
 ```bash
 # Talcum
-cd /Users/richconnelly/Desktop/CLAUDE WORKSPACE/ironcladjustice-deploy/ironcladjustice-talcum
+cd $ICJ_WORKSPACE/ironcladjustice-talcum
 git add index.html && git commit -m "Design: [description]" && git push origin main
 
 # Hair
-cd /Users/richconnelly/Desktop/CLAUDE WORKSPACE/ironcladjustice-deploy/ironcladjustice-hair
+cd $ICJ_WORKSPACE/ironcladjustice-hair
 git add index.html && git commit -m "Design: [description]" && git push origin main
 
 # Depo
-cd /Users/richconnelly/Desktop/CLAUDE WORKSPACE/ironcladjustice-deploy/ironcladjustice-depo
+cd $ICJ_WORKSPACE/ironcladjustice-depo
 git add index.html && git commit -m "Design: [description]" && git push origin main
 ```
 
@@ -223,7 +223,7 @@ These differences are intentional and match the live sites. Do not "fix" them.
 
 The homepage (`www.ironcladjustice.com`) links to each case subdomain. If you add a new case page, you must also update the homepage.
 
-Homepage file: `/Users/richconnelly/Desktop/CLAUDE WORKSPACE/ironcladjustice-deploy/index.html`
+Homepage file: `$ICJ_WORKSPACE/index.html`
 
 All case links should point to:
 - `https://talcum.ironcladjustice.com`
@@ -235,7 +235,7 @@ All case links should point to:
 
 Verify homepage links:
 ```bash
-grep -E "href=" /Users/richconnelly/Desktop/CLAUDE WORKSPACE/ironcladjustice-deploy/index.html | grep -v "altrck4\|privacy\|terms\|#"
+grep -E "href=" $ICJ_WORKSPACE/index.html | grep -v "altrck4\|privacy\|terms\|#"
 ```
 
 ---

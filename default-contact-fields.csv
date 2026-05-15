@@ -1,0 +1,16 @@
+key,required,required_on_create,required_on_ping,name,hint,value_type,html_id,show_in_docs,show_in_tables,show_in_reports,sortable_order
+first_name,TRUE,TRUE,FALSE,First Name,First Name,string,,TRUE,TRUE,FALSE,0
+last_name,TRUE,TRUE,FALSE,Last Name,Last Name,string,,TRUE,TRUE,FALSE,1
+email,TRUE,TRUE,FALSE,Email Address,The Email Address of the Lead,string,,TRUE,TRUE,FALSE,2
+phone,TRUE,TRUE,FALSE,Phone,,string,,TRUE,TRUE,FALSE,3
+state,FALSE,FALSE,FALSE,State,The state of the address for the lead,string,,TRUE,TRUE,FALSE,4
+city,FALSE,FALSE,FALSE,City,The city of the address for the lead,string,,TRUE,TRUE,FALSE,5
+zip,FALSE,FALSE,FALSE,Zip,The USA Zip Code of the address for the lead,string,,TRUE,TRUE,FALSE,6
+attorney,TRUE,TRUE,FALSE,Attorney,Are you currently represented by an attorney for this case?,string,,TRUE,TRUE,FALSE,
+ip_address,FALSE,TRUE,FALSE,IP Address,The IP Address where the form was filled out.,string,,TRUE,TRUE,FALSE,
+source_url,FALSE,FALSE,FALSE,Source URL,Site where the original lead form was submitted,string,,TRUE,TRUE,FALSE,
+xxtrustedformcerturl,FALSE,TRUE,FALSE,Trusted Form URL from Website,Trusted Form URL from Website,string,,TRUE,TRUE,FALSE,
+s1,FALSE,FALSE,FALSE,Subid 1,This is for custom tracking and is subid1 field.,string,,TRUE,TRUE,FALSE,
+s2,FALSE,FALSE,FALSE,Subid 2,This is for custom tracking and is subid2 field.,string,,TRUE,TRUE,FALSE,
+s3,FALSE,FALSE,FALSE,Subid 3,This is for custom tracking and is subid3 field.,string,,TRUE,TRUE,FALSE,
+s4,FALSE,FALSE,FALSE,Subid 4,This is for custom tracking and is subid4 field.,string,,TRUE,TRUE,FALSE,

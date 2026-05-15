@@ -31,7 +31,7 @@ Do not begin a session until you have all of the following. Missing any item wil
 
 ### Credentials (you hold these — provide fresh each session)
 - [ ] **TrackDrive Developer Token** — from your TrackDrive account under Developer Tokens
-- [ ] **GitHub Personal Access Token (PAT)** — generate at github.com/settings/tokens, `repo` scope only. Revoke after launch.
+- [ ] **GitHub PAT** — only needed if the monorepo remote is not already authenticated locally. Check first — usually not needed.
 - [ ] **Vercel API Token** — generate at vercel.com/account/tokens, Full Account. Revoke after launch.
 - [ ] **Namecheap API Key** — already set up (`atumlegal` account). Just confirm your VPN is active before Claude calls the DNS API.
 
@@ -96,15 +96,15 @@ If you didn't provide an image, Claude presents 2–3 stock photo options with d
 
 ### STEP 5 — GitHub
 **Who does it:** Claude  
-**What happens:** Creates the GitHub repo under `atumcaseclaim` and pushes the page and image.
+**What happens:** Adds the new case as a subdirectory (`[slug]/`) in the shared `ironcladjustice-main` repo and pushes it. No new GitHub repo is created — all ICJ sites live in one repo.
 
-**You provide:** GitHub PAT (at the start of session — used here)
+**You provide:** Nothing — no PAT needed (repo is already configured locally)
 
 ---
 
 ### STEP 6 — Vercel
 **Who does it:** Claude  
-**What happens:** Creates the Vercel project, links it to the GitHub repo, adds the subdomain, and triggers the first deployment.
+**What happens:** Creates a new Vercel project linked to `ironcladjustice-main` with `rootDirectory` set to the new subdirectory, adds the subdomain, and triggers the first deployment.
 
 **You provide:** Vercel API Token (at the start of session — used here)
 
@@ -147,10 +147,10 @@ DNS can take 5–30 minutes. Claude will check and report back.
 
 ### STEP 11 — Cleanup
 **Who does it:** You  
-**What happens:** Revoke the GitHub PAT and Vercel token — they are single-use per launch.
+**What happens:** Revoke the Vercel token (and GitHub PAT if one was used) — single-use per launch.
 
-- GitHub PAT: github.com/settings/tokens
 - Vercel token: vercel.com/account/tokens
+- GitHub PAT (if used): github.com/settings/tokens
 
 TrackDrive token: revoke after buyer is fully configured.  
 Namecheap key: no rotation needed (static whitelisted IP).

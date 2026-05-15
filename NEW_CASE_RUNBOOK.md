@@ -253,37 +253,35 @@ Check:
 
 ---
 
-## Step 5 — Create GitHub Repository
+## Step 5 — Add Case to Monorepo
+
+All ICJ sites live in `atumcaseclaim/ironcladjustice-main`. No new repo is created per case.
 
 ```bash
-# Create the repo under the atumcaseclaim org/account
-curl -X POST \
-  -H "Authorization: token ${GITHUB_TOKEN}" \
-  -H "Accept: application/vnd.github.v3+json" \
-  https://api.github.com/user/repos \
-  -d "{
-    \"name\": \"ironcladjustice-${CASE}\",
-    \"private\": false,
-    \"auto_init\": false
-  }"
+BASE="/Users/richconnelly/Desktop/CLAUDE WORKSPACE/ironcladjustice-deploy"
+
+# Create the case subdirectory and copy in the built files
+mkdir -p "${BASE}/${CASE}/images"
+cp [built-index.html] "${BASE}/${CASE}/index.html"
+# If the case uses an image:
+cp [image.jpg] "${BASE}/${CASE}/images/${CASE}.jpg"
+
+# Stage and push
+cd "${BASE}"
+git add ${CASE}/
+git commit -m "Add ${CASE} case landing page"
+git push origin main
 ```
+
+Verify at: `https://github.com/atumcaseclaim/ironcladjustice-main/tree/main/${CASE}`
+
+> **GitHub PAT not needed** — the repo remote is already configured locally.
 
 ---
 
-## Step 6 — Push Code to GitHub
+## Step 6 — (Removed — merged into Step 5)
 
-```bash
-cd /Users/richconnelly/Desktop/CLAUDE WORKSPACE/ironcladjustice-deploy/ironcladjustice-${CASE}
-
-git init
-git add index.html
-git commit -m "Launch: Iron Clad Justice ${CASE} case page"
-git branch -M main
-git remote add origin https://${GITHUB_TOKEN}@github.com/atumcaseclaim/ironcladjustice-${CASE}.git
-git push -u origin main
-```
-
-Verify at: `https://github.com/atumcaseclaim/ironcladjustice-${CASE}`
+Step 6 (Push Code) is now part of Step 5. Proceed to Step 7.
 
 ---
 
@@ -297,9 +295,10 @@ curl -X POST \
   -d "{
     \"name\": \"ironcladjustice-${CASE}\",
     \"framework\": null,
+    \"rootDirectory\": \"${CASE}\",
     \"gitRepository\": {
       \"type\": \"github\",
-      \"repo\": \"atumcaseclaim/ironcladjustice-${CASE}\"
+      \"repo\": \"atumcaseclaim/ironcladjustice-main\"
     }
   }"
 ```

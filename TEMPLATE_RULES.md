@@ -317,16 +317,21 @@ Talcum page has a post-submit redirect. Hair does not. Do not add/remove without
 
 ## 15. GITHUB + VERCEL STRUCTURE
 
-| Subdomain | GitHub Repo | Vercel Project |
-|-----------|-------------|----------------|
-| www.ironcladjustice.com | atumcaseclaim/ironcladjustice-main | ironcladjustice-main |
-| talcum.ironcladjustice.com | atumcaseclaim/ironcladjustice-talcum | ironcladjustice-talcum |
-| hair.ironcladjustice.com | atumcaseclaim/ironcladjustice-hair | ironcladjustice-hair |
-| depo.ironcladjustice.com | atumcaseclaim/ironcladjustice-depo | ironcladjustice-depo |
-| privacy.ironcladjustice.com | atumcaseclaim/ironcladjustice-privacy | ironcladjustice-privacy |
-| terms.ironcladjustice.com | atumcaseclaim/ironcladjustice-terms | ironcladjustice-terms |
+**Single repo monorepo:** All sites live in `atumcaseclaim/ironcladjustice-main`. Each Vercel project uses a `rootDirectory` setting pointing to its subdirectory. A push to `main` auto-deploys only the projects whose tracked subdirectory changed.
 
-Pushing to `main` on any repo triggers an automatic Vercel rebuild. No manual redeploy needed.
+| Subdomain | GitHub Path | Vercel Project | rootDirectory |
+|-----------|-------------|----------------|---------------|
+| www.ironcladjustice.com | `ironcladjustice-main/www/` | ironcladjustice-main | `www` |
+| talcum.ironcladjustice.com | `ironcladjustice-main/talcum/` | ironcladjustice-talcum | `talcum` |
+| hair.ironcladjustice.com | `ironcladjustice-main/hair/` | ironcladjustice-hair | `hair` |
+| depo.ironcladjustice.com | `ironcladjustice-main/depo/` | ironcladjustice-depo | `depo` |
+| wildfire.ironcladjustice.com | `ironcladjustice-main/wildfire/` | ironcladjustice-wildfire | `wildfire` |
+| privacy.ironcladjustice.com | `ironcladjustice-main/privacy/` | ironcladjustice-privacy | `privacy` |
+| terms.ironcladjustice.com | `ironcladjustice-main/terms/` | ironcladjustice-terms | `terms` |
+
+**Adding a new case:** Create a new subdirectory in `ironcladjustice-main/` (e.g. `hair-relaxer/`), add `index.html`, commit and push. Then create a new Vercel project linked to `ironcladjustice-main` with `rootDirectory` set to the new subdirectory name. No new GitHub repo needed.
+
+Pushing to `main` triggers automatic Vercel rebuilds for affected projects. No manual redeploy needed.
 
 ---
 

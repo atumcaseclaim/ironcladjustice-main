@@ -155,41 +155,47 @@ grep -n "\[" index.html | grep -v "<!--\|//\|focus:\|hover:\|border-\["
 
 ---
 
-## Phase 5 — GitHub
+## Phase 5 — GitHub (Monorepo)
+
+**Structure:** All cases live in `atumcaseclaim/ironcladjustice-main`. No new repo per case.
 
 ```bash
 GITHUB_TOKEN="[PAT]"
+BASE="/Users/richconnelly/Desktop/CLAUDE WORKSPACE/ironcladjustice-deploy"
 
-# Create repo (user account — NOT org endpoint)
-POST https://api.github.com/user/repos
-{ "name": "ironcladjustice-[slug]", "private": false, "auto_init": false }
+# Create new subdirectory for the case
+mkdir -p "${BASE}/[slug]/images"
 
-# Init and push
-cd ironcladjustice-[slug]/
-git init
-git add index.html images/[slug].jpg
-git commit -m "Initial commit: [Case Name] landing page"
-git branch -M main
-git remote add origin "https://[PAT]@github.com/atumcaseclaim/ironcladjustice-[slug].git"
-git push -u origin main
+# Copy built index.html and any images into the subdirectory
+cp [built-index.html] "${BASE}/[slug]/index.html"
+cp [image.jpg] "${BASE}/[slug]/images/[slug].jpg"   # if applicable
 
-# Confirm: https://github.com/atumcaseclaim/ironcladjustice-[slug]
+# Stage and push
+cd "${BASE}"
+git add [slug]/
+git commit -m "Add [Case Name] landing page"
+git push origin main
+
+# Confirm at: https://github.com/atumcaseclaim/ironcladjustice-main/tree/main/[slug]
 ```
+
+**Note:** No GitHub PAT needed for this step since the repo already exists locally with a remote configured.
 
 ---
 
-## Phase 6 — Vercel
+## Phase 6 — Vercel (Monorepo)
 
 ```bash
 VERCEL_TOKEN="[token]"
 TEAM_ID="team_gUqkzG8sqjxTcnuOcXDAEM3L"
 
-# Create project linked to GitHub repo
+# Create project linked to monorepo with rootDirectory
 POST https://api.vercel.com/v9/projects?teamId=[TEAM_ID]
 {
   "name": "ironcladjustice-[slug]",
   "framework": null,
-  "gitRepository": { "type": "github", "repo": "atumcaseclaim/ironcladjustice-[slug]" }
+  "rootDirectory": "[slug]",
+  "gitRepository": { "type": "github", "repo": "atumcaseclaim/ironcladjustice-main" }
 }
 # → Returns project.id
 
@@ -197,16 +203,20 @@ POST https://api.vercel.com/v9/projects?teamId=[TEAM_ID]
 POST https://api.vercel.com/v9/projects/[PROJECT_ID]/domains?teamId=[TEAM_ID]
 { "name": "[slug].ironcladjustice.com" }
 
-# Trigger deployment
-# 1. Get latest commit SHA from GitHub
+# Trigger first deployment
+# 1. Get latest commit SHA: git rev-parse HEAD
 # 2. POST https://api.vercel.com/v13/deployments?teamId=[TEAM_ID]
-#    { "name": "ironcladjustice-[slug]", "gitSource": { "type": "github", "org": "atumcaseclaim",
-#      "repo": "ironcladjustice-[slug]", "ref": "main", "sha": "[SHA]" },
-#      "projectSettings": { "framework": null }, "target": "production" }
+#    { "name": "ironcladjustice-[slug]",
+#      "project": "[PROJECT_ID]",
+#      "gitSource": { "type": "github", "org": "atumcaseclaim",
+#        "repo": "ironcladjustice-main", "ref": "main", "sha": "[SHA]" },
+#      "target": "production" }
 
 # ⚠️ After domain is added, check Vercel for the CNAME target
 # It will be a specific hash like: e37a2e4740c0478d.vercel-dns-017.com
 # DO NOT use the generic cname.vercel-dns.com — it will cause a DNS warning
+
+# Future pushes to ironcladjustice-main/[slug]/ auto-trigger redeploy — no manual step needed
 ```
 
 ---
@@ -399,7 +409,8 @@ git push
 | TrackDrive | Filter values | Always `values: [...]` array — never the singular `value` field |
 | Vercel | CNAME target | Always use the specific hash CNAME from Vercel (not `cname.vercel-dns.com`) |
 | Vercel | Project creation | Use REST API — MCP has no create-project tool |
-| GitHub | Repo creation | Use `/user/repos` — account is a user account, not an org |
+| Vercel | New case project | Set `rootDirectory` at creation to the subdirectory name; link to `ironcladjustice-main` |
+| GitHub | New case | Add a subdirectory in `ironcladjustice-main` — no new repo needed |
 | Namecheap | setHosts | Replaces ALL records — always GET first, append, then SET full array |
 
 ---
@@ -428,7 +439,7 @@ After each phase, confirm before proceeding:
 | 2 (Content) | Explicit "approved" received |
 | 3 (Image) | Image selected or confirmed |
 | 4 (Build) | Grep check returns zero `[BRACKET]` hits |
-| 5 (GitHub) | Repo visible at github.com/atumcaseclaim/ironcladjustice-[slug] |
+| 5 (GitHub) | Subdirectory visible at github.com/atumcaseclaim/ironcladjustice-main/tree/main/[slug] |
 | 6 (Vercel) | Deployment state = READY; Vercel-specific CNAME noted |
 | 7 (DNS) | setHosts returns OK; re-GET confirms [slug] CNAME present; all previous records intact |
 | 8 (Verify) | Page live, geo headline working, test lead in TrackDrive |

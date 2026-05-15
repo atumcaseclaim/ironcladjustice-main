@@ -69,7 +69,7 @@
         <div class="form-subtitle">SIGNIFICANT Compensation May Be Available</div>
         <p style="color: #0f172a; font-weight: 600; margin-bottom: 20px;">100% Free Consultation!</p>
         
-        <form>
+        <form id="lead-form">
           <div>
             <label>Did you use Depo for at least 1 year or receive 4 injections? *</label>
             <select required>
@@ -210,5 +210,35 @@
     }
     window.addEventListener('load', fillUserLocation);
 </script>
+
+<!-- TrustedForm -->
+<script type="text/javascript">
+  (function() {
+    var tf = document.createElement('script');
+    tf.type = 'text/javascript';
+    tf.async = true;
+    tf.src = ("https:" == document.location.protocol ? 'https' : 'http') +
+      '://api.trustedform.com/trustedform.js?field=xxTrustedFormCertUrl&use_tagged_consent=true&l=' +
+      new Date().getTime() + Math.random();
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(tf, s);
+  })();
+</script>
+<noscript>
+  <img src='https://api.trustedform.com/ns.gif' />
+</noscript>
+<!-- End TrustedForm -->
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const form = document.getElementById('lead-form');
+        if (form) {
+            form.addEventListener('submit', function(e) {
+                e.preventDefault();
+                window.location.href = 'https://thankyou.ironcladjustice.com/';
+            });
+        }
+    });
+</script>
+
 </body>
 </html><!-- Build trigger: 1778577140 -->

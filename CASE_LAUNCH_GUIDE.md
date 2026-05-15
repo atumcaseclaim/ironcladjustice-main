@@ -9,9 +9,9 @@ At the beginning of any new Claude session, paste this exact message:
 
 ```
 Please read the following files before we begin:
-- /Users/richconnelly/ironcladjustice-deploy/WORKFLOW_TEMPLATE.md
-- /Users/richconnelly/ironcladjustice-deploy/TEMPLATE_RULES.md
-- /Users/richconnelly/ironcladjustice-deploy/OPERATIONS_SOP.md
+- /Users/richconnelly/Desktop/CLAUDE WORKSPACE/ironcladjustice-deploy/WORKFLOW_TEMPLATE.md
+- /Users/richconnelly/Desktop/CLAUDE WORKSPACE/ironcladjustice-deploy/TEMPLATE_RULES.md
+- /Users/richconnelly/Desktop/CLAUDE WORKSPACE/ironcladjustice-deploy/OPERATIONS_SOP.md
 
 Then confirm you are ready to begin a new case launch.
 ```
@@ -183,7 +183,7 @@ Claude will: unpause the buyer, submit a test lead, and confirm the full lead fl
 
 ## File Locations (for reference)
 
-All operational docs live in: `/Users/richconnelly/ironcladjustice-deploy/`  
+All operational docs live in: `/Users/richconnelly/Desktop/CLAUDE WORKSPACE/ironcladjustice-deploy/`  
 Also pushed to GitHub: `github.com/atumcaseclaim/ironcladjustice-main`
 
 | File | Purpose |

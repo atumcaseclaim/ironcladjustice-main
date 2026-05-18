@@ -19,7 +19,7 @@
         .accent-yellow { color: #eab308; }
 
         /* Header styles matching ironcladjustice.com brand */
-        .icj-nav { background: rgba(15, 23, 42, 0.96); border-bottom: 1px solid rgba(255,255,255,0.08); }
+        .icj-nav { position: sticky; top: 0; z-index: 1000; background: rgba(15, 23, 42, 0.96); backdrop-filter: blur(10px); border-bottom: 1px solid rgba(255,255,255,0.08); }
         .icj-nav-inner { display: flex; justify-content: space-between; align-items: center; padding: 22px 40px; max-width: 1200px; margin: auto; }
         .icj-logo { font-size: 1.8rem; font-weight: 800; color: white; letter-spacing: -0.5px; text-decoration: none; }
         .icj-logo span { color: #d4a017; }
@@ -35,7 +35,7 @@
     <!-- ==================== HEADER ==================== -->
     <header class="icj-nav">
         <div class="icj-nav-inner">
-            <div class="icj-logo">Iron <span>Clad</span> Justice</div>
+            <div class="icj-logo">Iron&nbsp;<span>Clad</span>&nbsp;Justice</div>
             <div class="icj-cta">FILE YOUR FREE CLAIM TODAY!</div>
         </div>
     </header>

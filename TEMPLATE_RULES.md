@@ -1,7 +1,7 @@
 # Iron Clad Justice — Template Rules
 # FROZEN ELEMENTS: Do not change without explicit approval
 
-Last Updated: 2026-05-15
+Last Updated: 2026-05-18
 
 ---
 
@@ -13,15 +13,17 @@ Case landing pages use a **logo + CTA only** header. No navigation links.
 ```html
 <header class="icj-nav">
     <div class="icj-nav-inner">
-        <div class="icj-logo">Iron <span>Clad</span> Justice</div>
+        <div class="icj-logo">Iron&nbsp;<span>Clad</span>&nbsp;Justice</div>
         <div class="icj-cta">FILE YOUR FREE CLAIM TODAY!</div>
     </div>
 </header>
 ```
 
+> Note: Use `&nbsp;` between words in the logo — plain spaces collapse in Tailwind's flex context.
+
 ### CSS (frozen — must appear in `<style>` block)
 ```css
-.icj-nav { background: rgba(15, 23, 42, 0.96); border-bottom: 1px solid rgba(255,255,255,0.08); }
+.icj-nav { position: sticky; top: 0; z-index: 1000; background: rgba(15, 23, 42, 0.96); backdrop-filter: blur(10px); border-bottom: 1px solid rgba(255,255,255,0.08); }
 .icj-nav-inner { display: flex; justify-content: space-between; align-items: center; padding: 22px 40px; max-width: 1200px; margin: auto; }
 .icj-logo { font-size: 1.8rem; font-weight: 800; color: white; letter-spacing: -0.5px; text-decoration: none; }
 .icj-logo span { color: #d4a017; }
@@ -33,7 +35,7 @@ Case landing pages use a **logo + CTA only** header. No navigation links.
 ```
 
 **NEVER:** Add navigation links to case landing page headers.
-**NEVER:** Change the logo text — it must read `Iron <span>Clad</span> Justice`.
+**NEVER:** Change the logo text — it must read `Iron&nbsp;<span>Clad</span>&nbsp;Justice`.
 **NEVER:** Change the CTA text without approval.
 
 ---

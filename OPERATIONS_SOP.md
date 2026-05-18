@@ -1,7 +1,7 @@
 # Iron Clad Justice — Operations SOP
 # Master reference for order of operations, scope rules, and directive keywords
 
-Last Updated: 2026-05-13
+Last Updated: 2026-05-18
 
 ---
 
@@ -350,6 +350,115 @@ When building the form from a law firm spec doc:
 
 ### Getting a Draft Without Deploying
 > "Draft content for [case] based on this spec: [paste spec]."
+
+---
+
+---
+
+## Section 9 — TrackDrive API Patterns
+
+Reference for executing TrackDrive API work correctly. Apply these rules any time you are creating or modifying offers, contact fields, buyers, webhooks, or webhook params.
+
+---
+
+### 9.1 Pre-Flight Audit (run before any write)
+
+Before creating or modifying anything in TrackDrive, fetch the current state of the offer. Run all four calls in parallel:
+
+```bash
+# Offer details
+curl -s "$TD_BASE/api/v1/offers/{offer_id}" \
+  -H "Authorization: Token token=$TD_TOKEN" | jq .
+
+# All contact fields — always use per_page=200
+curl -s "$TD_BASE/api/v1/contact_fields?offer_id={offer_id}&per_page=200" \
+  -H "Authorization: Token token=$TD_TOKEN" | jq '.[] | {id, name, key}'
+
+# All outgoing webhooks
+curl -s "$TD_BASE/api/v1/outgoing_webhooks?offer_id={offer_id}&per_page=200" \
+  -H "Authorization: Token token=$TD_TOKEN" | jq .
+
+# All buyers
+curl -s "$TD_BASE/api/v1/buyers?per_page=200" \
+  -H "Authorization: Token token=$TD_TOKEN" | jq '.[] | {id, name, status}'
+```
+
+**Always check `total_count` in the response.** If `total_count > per_page`, paginate. Never assume the first page is complete.
+
+Produce a diff — what the posting instructions require vs. what already exists — before writing anything.
+
+---
+
+### 9.2 Contact Field Management
+
+**Fix before create.** If a field with the right intent already exists but has a typo or wrong key, fix it with PUT rather than creating a new one:
+
+```bash
+curl -s -X PUT "$TD_BASE/api/v1/contact_fields/{field_id}" \
+  -H "Authorization: Token token=$TD_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{"contact_field": {"key": "corrected_key"}}'
+```
+
+**Duplicate check before POST.** Only create fields that do not exist in the audit result. Duplicate fields must be deleted immediately — use the field with the lower (older) ID as the canonical one.
+
+---
+
+### 9.3 Outgoing Webhook Patterns
+
+**`offer_id: null` is correct for buyer-type webhooks.** This is not a configuration error. The offer context is applied through routing (schedule_distributions), not stored on the webhook record itself. Do not delete and recreate a webhook to fix a null `offer_id`.
+
+Before concluding a webhook is misconfigured, fetch the same field from a known-good webhook on an active case (AFFF or Wildfire) and compare. Only take destructive action if the known-good baseline confirms the field should be populated.
+
+**Webhook URL field naming:**
+- `url` on the webhook record is the default fallback URL
+- Buyer-specific URLs are set via `POST /api/v1/outgoing_webhook_urls` with a `record_token_filter`
+
+---
+
+### 9.4 `campaign_name` vs. `campaign_slug`
+
+These are two different things:
+
+| Field | Where it lives | What it does |
+|---|---|---|
+| `campaign_slug` | TrackDrive offer object | Metadata label on the offer — not used at submission time |
+| `campaign_name` | HTML hidden input in the form | Sent in the POST body — this is what identifies the campaign when a lead is submitted |
+
+**Do not attempt to update `campaign_slug` on the offer via API to match.** It is not reliably writable and is not what controls routing. Set `campaign_name` in the form's hidden field:
+
+```html
+<input type="hidden" name="campaign_name" value="depo-provera-claims">
+```
+
+Use the case slug format: lowercase, hyphenated (e.g., `talcum-powder-claims`, `depo-provera-claims`).
+
+---
+
+### 9.5 TrackDrive Webhook Param Syntax
+
+Dynamic field values in webhook params use triple-brace Handlebars syntax:
+
+```
+{{{first_name}}}   ← correct
+{{first_name}}     ← incorrect (HTML-escapes the value)
+```
+
+Static values are passed as plain strings (no braces).
+
+---
+
+### 9.6 Buyer Status at Onboarding
+
+New buyers are created with `status: "paused"` by default. They remain paused until the "Go live [case]" directive is given. The outgoing webhook is also created in a disabled state until go-live.
+
+**Go-live checklist (triggered by "Go live [case]"):**
+1. Unpause buyer: `PUT /api/v1/buyers/{id}` with `{"buyer": {"status": "active"}}`
+2. Enable webhook: `PUT /api/v1/outgoing_webhooks/{id}` with `{"outgoing_webhook": {"enabled": true}}`
+3. Submit test lead through the live form
+4. Confirm TrackDrive console shows the lead
+5. Check webhook logs: `GET /api/v1/webhook_logs?outgoing_webhook_id={id}`
+6. Confirm buyer's system received the lead
 
 ---
 

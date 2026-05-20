@@ -1,7 +1,7 @@
 # Iron Clad Justice — Template Rules
 # FROZEN ELEMENTS: Do not change without explicit approval
 
-Last Updated: 2026-05-18
+Last Updated: 2026-05-20
 
 ---
 
@@ -13,13 +13,13 @@ Case landing pages use a **logo + CTA only** header. No navigation links.
 ```html
 <header class="icj-nav">
     <div class="icj-nav-inner">
-        <div class="icj-logo">Iron&nbsp;<span>Clad</span>&nbsp;Justice</div>
+        <div class="icj-logo">Iron<span>Clad</span>Justice</div>
         <div class="icj-cta">FILE YOUR FREE CLAIM TODAY!</div>
     </div>
 </header>
 ```
 
-> Note: Use `&nbsp;` between words in the logo — plain spaces collapse in Tailwind's flex context.
+> Note: No spaces between words — matches homepage flex behavior where whitespace collapses.
 
 ### CSS (frozen — must appear in `<style>` block)
 ```css
@@ -35,7 +35,7 @@ Case landing pages use a **logo + CTA only** header. No navigation links.
 ```
 
 **NEVER:** Add navigation links to case landing page headers.
-**NEVER:** Change the logo text — it must read `Iron&nbsp;<span>Clad</span>&nbsp;Justice`.
+**NEVER:** Change the logo text — it must read `Iron<span>Clad</span>Justice`.
 **NEVER:** Change the CTA text without approval.
 
 ---
@@ -238,8 +238,8 @@ The checkbox must be `required`. The legal text is frozen — do not paraphrase 
         I understand that my consent is not required to obtain any goods or services, and that standard message and data rates may apply.
         I can opt-out at any time.
         I also accept the
-        <a href="https://terms.altrck4.com" class="underline hover:text-yellow-400">Terms of Service</a> and
-        <a href="https://privacy.altrck4.com" class="underline hover:text-yellow-400">Privacy Policy</a>.
+        <a href="https://terms.ironcladjustice.com" class="underline hover:text-yellow-400">Terms of Service</a> and
+        <a href="https://privacy.ironcladjustice.com" class="underline hover:text-yellow-400">Privacy Policy</a>.
     </label>
 </div>
 ```
@@ -297,8 +297,8 @@ Pages with full validation (wildfire, afff, and any new cases) use the extended 
 <footer class="bg-slate-900 text-white py-10 text-center text-sm">
     <div class="max-w-4xl mx-auto px-6">
         © 2026 Iron Clad Justice • All Rights Reserved<br>
-        <a href="https://privacy.altrck4.com/" class="underline hover:text-yellow-400">Privacy Policy</a> |
-        <a href="https://terms.altrck4.com/" class="underline hover:text-yellow-400">Terms of Service</a>
+        <a href="https://privacy.ironcladjustice.com/" class="underline hover:text-yellow-400">Privacy Policy</a> |
+        <a href="https://terms.ironcladjustice.com/" class="underline hover:text-yellow-400">Terms of Service</a>
     </div>
 </footer>
 ```

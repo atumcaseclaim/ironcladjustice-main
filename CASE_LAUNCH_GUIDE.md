@@ -5,21 +5,24 @@
 
 ## How to Start a Clean Session
 
-**Step 1 — Find and sync your local workspace.** At the beginning of any new Claude session, paste this exact message:
+**Step 1 — Sync and load context.** At the beginning of any new Claude session, paste this exact message:
 
 ```
-Find the ironcladjustice-deploy directory on this machine (it lives somewhere inside a "CLAUDE WORKSPACE" folder), then run `git pull origin main` to sync the latest from GitHub. Set that path as $ICJ_WORKSPACE for this session.
+export ICJ_WORKSPACE=~/projects/atum/icj/ironcladjustice-main
+git -C $ICJ_WORKSPACE pull origin main
 
-Then read the following files:
+Then read:
 - $ICJ_WORKSPACE/WORKFLOW_TEMPLATE.md
 - $ICJ_WORKSPACE/TEMPLATE_RULES.md
 - $ICJ_WORKSPACE/OPERATIONS_SOP.md
 - $ICJ_WORKSPACE/CASE_LAUNCH_GUIDE.md
 
+Also source ~/.atum/credentials to load API keys for this session.
+
 Confirm you are ready to begin.
 ```
 
-This works from any machine regardless of where the folder lives. GitHub is the source of truth — the pull ensures you have the latest docs, templates, and site files before starting.
+GitHub is the source of truth — the pull ensures you have the latest docs, templates, and site files before starting.
 
 **First time on a new machine?** See the one-time machine setup at the bottom of this file.
 
@@ -207,18 +210,20 @@ Also pushed to GitHub: `github.com/atumcaseclaim/ironcladjustice-main`
 Do this once when setting up a new computer. Not needed each session.
 
 ```bash
-# 1. Create the workspace folder wherever you want it
-mkdir -p ~/Desktop/CLAUDE\ WORKSPACE
+# 1. Create the projects directory structure
+mkdir -p ~/projects/atum/icj
 
-# 2. Clone the monorepo into it
-cd ~/Desktop/CLAUDE\ WORKSPACE
-git clone https://github.com/atumcaseclaim/ironcladjustice-main.git ironcladjustice-deploy
+# 2. Clone the monorepo
+git clone https://github.com/atumcaseclaim/ironcladjustice-main.git \
+  ~/projects/atum/icj/ironcladjustice-main
 
-# 3. Verify
-ls ironcladjustice-deploy/
+# 3. Create credentials file
+mkdir -p ~/.atum && touch ~/.atum/credentials && chmod 600 ~/.atum/credentials
+# Fill in ~/.atum/credentials with current API keys (see template in repo or ask Rich)
+
+# 4. Verify
+ls ~/projects/atum/icj/ironcladjustice-main/
 # Should show: www/ wildfire/ talcum/ hair/ depo/ privacy/ terms/ CASE_TEMPLATE/ *.md
 ```
-
-After this, the session startup prompt works automatically — Claude will find `ironcladjustice-deploy` inside `CLAUDE WORKSPACE` regardless of the full path.
 
 **Note on git push:** Pushing requires GitHub access. If your machine isn't authenticated, Claude will prompt you for a PAT when it tries to push a new case. Generate a short-lived one at github.com/settings/tokens (`repo` scope), use it for the push, then revoke it.

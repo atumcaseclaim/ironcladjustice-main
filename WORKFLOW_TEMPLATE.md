@@ -226,9 +226,9 @@ POST https://api.vercel.com/v9/projects/[PROJECT_ID]/domains?teamId=[TEAM_ID]
 ⚠️ **VPN must be active** — API key is whitelisted to IP `136.242.94.183`
 
 ```bash
-NC_USER="atumlegal"
-NC_KEY="91bc864a2b8c4b9f9872dd7c2d806a24"
-NC_IP="136.242.94.183"
+NC_USER="${NC_USER}"        # set via ~/.atum/credentials
+NC_KEY="${NC_KEY}"          # set via ~/.atum/credentials
+NC_IP="${NC_IP}"            # set via ~/.atum/credentials
 
 # Step 1: GET all existing records (NEVER SKIP)
 GET https://api.namecheap.com/xml.response
@@ -357,14 +357,14 @@ GET /api/v1/record_token_params?record_token_filter_id=[FILTER_ID]
 ## Phase 10 — Homepage Update
 
 ```bash
-# Edit: ironcladjustice-deploy/index.html
+# Edit: $ICJ_WORKSPACE/www/index.html
 # 1. Add case card to .cases-grid section
 # 2. Add footer link to Cases column
 # Use official subdomain URL (not temp Vercel URL) even if DNS not yet propagated
 
 # Commit and push
-cd ironcladjustice-deploy/
-git add index.html
+cd $ICJ_WORKSPACE
+git add www/index.html
 git commit -m "Add [Case Name] case card and footer link"
 git push
 # Vercel auto-deploys ironcladjustice-main

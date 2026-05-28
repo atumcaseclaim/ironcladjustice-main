@@ -68,11 +68,11 @@ Phase 5: LANDING PAGE BUILD
   → Open in browser for visual sanity check
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-Phase 6: GITHUB
+Phase 6: GITHUB (monorepo — NO new repo per case)
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-  → Create GitHub repo: atumcaseclaim/ironcladjustice-[case]
-  → Push index.html to main branch
-  → Confirm repo visible at github.com/atumcaseclaim/ironcladjustice-[case]
+  → Add [case]/ subdirectory to atumcaseclaim/ironcladjustice-main
+  → git add [case]/ && git commit && git push origin main
+  → Confirm subdirectory visible at github.com/atumcaseclaim/ironcladjustice-main/tree/main/[case]
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 Phase 7: VERCEL

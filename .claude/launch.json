@@ -4,44 +4,50 @@
     {
       "name": "www (main homepage)",
       "runtimeExecutable": "npx",
-      "runtimeArgs": ["serve", "/Users/richconnelly/Desktop/CLAUDE WORKSPACE/ironcladjustice-deploy", "-p", "3000"],
+      "runtimeArgs": ["serve", "/Users/richconnelly/projects/atum/icj/ironcladjustice-main/www", "-p", "3000"],
       "port": 3000
     },
     {
       "name": "wildfire.ironcladjustice.com",
       "runtimeExecutable": "npx",
-      "runtimeArgs": ["serve", "/Users/richconnelly/Desktop/CLAUDE WORKSPACE/ironcladjustice-deploy/ironcladjustice-wildfire", "-p", "3001"],
+      "runtimeArgs": ["serve", "/Users/richconnelly/projects/atum/icj/ironcladjustice-main/ironcladjustice-wildfire", "-p", "3001"],
       "port": 3001
     },
     {
       "name": "talcum.ironcladjustice.com",
       "runtimeExecutable": "npx",
-      "runtimeArgs": ["serve", "/Users/richconnelly/Desktop/CLAUDE WORKSPACE/ironcladjustice-deploy/ironcladjustice-talcum", "-p", "3002"],
+      "runtimeArgs": ["serve", "/Users/richconnelly/projects/atum/icj/ironcladjustice-main/ironcladjustice-talcum", "-p", "3002"],
       "port": 3002
     },
     {
       "name": "hair.ironcladjustice.com",
       "runtimeExecutable": "npx",
-      "runtimeArgs": ["serve", "/Users/richconnelly/Desktop/CLAUDE WORKSPACE/ironcladjustice-deploy/ironcladjustice-hair", "-p", "3003"],
+      "runtimeArgs": ["serve", "/Users/richconnelly/projects/atum/icj/ironcladjustice-main/ironcladjustice-hair", "-p", "3003"],
       "port": 3003
     },
     {
       "name": "depo.ironcladjustice.com",
       "runtimeExecutable": "npx",
-      "runtimeArgs": ["serve", "/Users/richconnelly/Desktop/CLAUDE WORKSPACE/ironcladjustice-deploy/ironcladjustice-depo", "-p", "3004"],
+      "runtimeArgs": ["serve", "/Users/richconnelly/projects/atum/icj/ironcladjustice-main/ironcladjustice-depo", "-p", "3004"],
       "port": 3004
     },
     {
       "name": "privacy.ironcladjustice.com",
       "runtimeExecutable": "npx",
-      "runtimeArgs": ["serve", "/Users/richconnelly/Desktop/CLAUDE WORKSPACE/ironcladjustice-deploy/ironcladjustice-privacy", "-p", "3005"],
+      "runtimeArgs": ["serve", "/Users/richconnelly/projects/atum/icj/ironcladjustice-main/ironcladjustice-privacy", "-p", "3005"],
       "port": 3005
     },
     {
       "name": "terms.ironcladjustice.com",
       "runtimeExecutable": "npx",
-      "runtimeArgs": ["serve", "/Users/richconnelly/Desktop/CLAUDE WORKSPACE/ironcladjustice-deploy/ironcladjustice-terms", "-p", "3006"],
+      "runtimeArgs": ["serve", "/Users/richconnelly/projects/atum/icj/ironcladjustice-main/ironcladjustice-terms", "-p", "3006"],
       "port": 3006
+    },
+    {
+      "name": "roblox.ironcladjustice.com",
+      "runtimeExecutable": "npx",
+      "runtimeArgs": ["serve", "/Users/richconnelly/projects/atum/icj/ironcladjustice-main/roblox", "-p", "3007"],
+      "port": 3007
     }
   ]
 }

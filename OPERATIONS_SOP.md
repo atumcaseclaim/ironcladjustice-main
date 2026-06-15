@@ -75,11 +75,14 @@ Phase 6: GITHUB (monorepo — NO new repo per case)
   → Confirm subdirectory visible at github.com/atumcaseclaim/ironcladjustice-main/tree/main/[case]
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-Phase 7: VERCEL
+Phase 7: VERCEL (hub model — NO new project per case)
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-  → Create Vercel project, link to GitHub repo
-  → Add custom domain: [case].ironcladjustice.com
+  → Add '[case]': '[case]' entry to SUBDOMAIN_MAP in middleware.js
+  → Commit + push → ironcladjustice-hub auto-deploys
+  → POST domain [case].ironcladjustice.com to ironcladjustice-hub project
   → Vercel confirms CNAME target: cname.vercel-dns.com
+  NOTE: Do NOT create a new per-case Vercel project — all cases route through
+        ironcladjustice-hub (prj_CNMwlgeBZ5D2zbBBZTfIPocQnPYq) via middleware.js
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 Phase 8: DNS (Namecheap API)
@@ -106,9 +109,11 @@ Phase 10: HOMEPAGE UPDATE
   → Verify new card appears and links to correct subdomain
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-Phase 11: TOKEN CLEANUP
+Phase 11: TOKEN CHECK
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-  → Revoke: GitHub PAT, Vercel token, TrackDrive dev token, Namecheap key
+  → Credentials live in `projects/atum/.atum-credentials` (gitignored, shared across all atum verticals — see .atum-credentials.example)
+  → Do NOT revoke ATUM_GITHUB_TOKEN, VERCEL_TOKEN, TD_TOKEN, or NC_KEY
+  → If `.atum-credentials` is missing a value, ask Rich for it ONCE and write it back
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 Phase 12: BUYER ONBOARDING  (separate workflow, per buyer)
@@ -227,36 +232,38 @@ These words have fixed operational meanings. Using them in a directive activates
 
 Before starting any directive, confirm all required inputs are present. Missing inputs = work does not begin.
 
+**Credentials note:** ATUM_GITHUB_TOKEN, VERCEL_TOKEN, TD_TOKEN, and NC_KEY are persistent in `projects/atum/.atum-credentials` (gitignored, shared across all atum verticals — see `.atum-credentials.example`). They are listed below for completeness but should be read from `.atum-credentials`, not requested from Rich, unless a value is missing.
+
 ### "stand up [case]"
 - [ ] Law firm spec doc (qualifying criteria, injury types, usage requirements, time period)
 - [ ] Case/product name confirmed
 - [ ] Subdomain slug confirmed (e.g., `roundup`)
-- [ ] TrackDrive Developer Token
-- [ ] GitHub Personal Access Token
-- [ ] Vercel API Token
-- [ ] Namecheap API key + whitelisted IP
+- [ ] TrackDrive Developer Token (TD_TOKEN, from `.atum-credentials`)
+- [ ] GitHub Personal Access Token (ATUM_GITHUB_TOKEN, from `.atum-credentials`)
+- [ ] Vercel API Token (VERCEL_TOKEN, from `.atum-credentials`)
+- [ ] Namecheap API key + whitelisted IP (NC_USER/NC_KEY/NC_IP, from `.atum-credentials`)
 
 ### "onboard buyer [name] for [case]"
 - [ ] Buyer's posting spec / integration doc
       (endpoint URL, auth method, field names, accepted values, response format)
 - [ ] Which case(s) this buyer covers
 - [ ] Volume caps or geo restrictions (if any)
-- [ ] TrackDrive Developer Token
+- [ ] TrackDrive Developer Token (TD_TOKEN, from `.atum-credentials`)
 
 ### "add field [field] to [case]"
 - [ ] Field name (as it appears in TrackDrive and the POST body)
 - [ ] Field type: `yes_no` | `select` (with values) | `text`
 - [ ] Label displayed to the user on the form
-- [ ] GitHub PAT (for deploy)
+- [ ] GitHub PAT (ATUM_GITHUB_TOKEN, from `.atum-credentials`, for deploy)
 
 ### "update content on [case]"
 - [ ] Which section to update, or instruction to redraft entirely
-- [ ] GitHub PAT (for deploy after approval)
+- [ ] GitHub PAT (ATUM_GITHUB_TOKEN, from `.atum-credentials`, for deploy after approval)
 
 ### "map fields for [buyer] on [case]"
 - [ ] Buyer's field name list (their exact parameter names)
 - [ ] Corresponding TrackDrive field names
-- [ ] TrackDrive Developer Token
+- [ ] TrackDrive Developer Token (TD_TOKEN, from `.atum-credentials`)
 
 ---
 
@@ -408,7 +415,7 @@ curl -s -X PUT "$TD_BASE/api/v1/contact_fields/{field_id}" \
 
 **`offer_id: null` is correct for buyer-type webhooks.** This is not a configuration error. The offer context is applied through routing (schedule_distributions), not stored on the webhook record itself. Do not delete and recreate a webhook to fix a null `offer_id`.
 
-Before concluding a webhook is misconfigured, fetch the same field from a known-good webhook on an active case (AFFF or Wildfire) and compare. Only take destructive action if the known-good baseline confirms the field should be populated.
+Before concluding a webhook is misconfigured, fetch the same field from a known-good webhook on an active case (Wildfire) and compare. Only take destructive action if the known-good baseline confirms the field should be populated.
 
 **Webhook URL field naming:**
 - `url` on the webhook record is the default fallback URL

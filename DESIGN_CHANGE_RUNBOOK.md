@@ -5,18 +5,23 @@
 
 ## Overview
 
-All ICJ pages are deployed via GitHub → Vercel auto-deploy. Pushing to the `main` branch of any repo automatically triggers a Vercel rebuild — no manual redeploy needed.
+All ICJ pages are deployed via GitHub → Vercel auto-deploy. Pushing to `main` on `atumcaseclaim/ironcladjustice-main` triggers a rebuild of the single `ironcladjustice-hub` Vercel project, which serves all subdomains via Edge Middleware. No manual redeploy needed.
 
-**Local repo location:** `$ICJ_WORKSPACE/`
+**Local repo location:** `$ICJ_WORKSPACE/` (`~/projects/atum/icj/ironcladjustice-main/`)
 
 | Subfolder | Live Domain |
 |-----------|-------------|
-| `ironcladjustice-main/` | www.ironcladjustice.com |
-| `ironcladjustice-talcum/` | talcum.ironcladjustice.com |
-| `ironcladjustice-hair/` | hair.ironcladjustice.com |
-| `ironcladjustice-depo/` | depo.ironcladjustice.com |
-| `ironcladjustice-privacy/` | privacy.ironcladjustice.com |
-| `ironcladjustice-terms/` | terms.ironcladjustice.com |
+| `www/` | ironcladjustice.com |
+| `talcum/` | talcum.ironcladjustice.com |
+| `hair/` | hair.ironcladjustice.com |
+| `depo/` | depo.ironcladjustice.com |
+| `afff/` | afff.ironcladjustice.com |
+| `wildfire/` | wildfire.ironcladjustice.com |
+| `roblox/` | roblox.ironcladjustice.com |
+| `camp-lejeune/` | camp-lejeune.ironcladjustice.com |
+| `sma/` | sma.ironcladjustice.com |
+| `privacy/` | privacy.ironcladjustice.com |
+| `terms/` | terms.ironcladjustice.com |
 
 ---
 
@@ -59,7 +64,7 @@ All files are plain HTML. Open in any text editor.
 
 ```bash
 # Example: editing the talcum page
-open $ICJ_WORKSPACE/ironcladjustice-talcum/index.html
+open $ICJ_WORKSPACE/talcum/index.html
 ```
 
 Or use Claude Code for guided edits.
@@ -68,10 +73,11 @@ Or use Claude Code for guided edits.
 
 If a design change needs to go across all case pages (e.g., updating the attention box style), make the change to each page individually and verify each one:
 
-1. `ironcladjustice-talcum/index.html`
-2. `ironcladjustice-hair/index.html`
-3. `ironcladjustice-depo/index.html`
-4. Any new case pages
+1. `talcum/index.html`
+2. `hair/index.html`
+3. `depo/index.html`
+4. `afff/index.html`, `wildfire/index.html`, `roblox/index.html`, etc.
+5. Any new case pages
 
 Use grep to confirm consistency:
 ```bash
@@ -96,14 +102,14 @@ Open the file in a browser and check:
 ### 3.1 Deploy a single page
 
 ```bash
-cd $ICJ_WORKSPACE/ironcladjustice-[page]
+cd $ICJ_WORKSPACE
 
-git add index.html
+git add [case]/index.html
 git commit -m "Design: [brief description of what changed]"
 git push origin main
 ```
 
-Vercel detects the push and auto-deploys. Build typically completes in 30–60 seconds.
+Vercel detects the push and auto-deploys `ironcladjustice-hub`. Build typically completes in 30–60 seconds.
 
 **Commit message conventions:**
 - `Design: [description]` — visual/layout changes
@@ -116,18 +122,14 @@ Vercel detects the push and auto-deploys. Build typically completes in 30–60 s
 Deploy each page in sequence. Wait for each to confirm before moving to the next.
 
 ```bash
-# Talcum
-cd $ICJ_WORKSPACE/ironcladjustice-talcum
-git add index.html && git commit -m "Design: [description]" && git push origin main
+cd $ICJ_WORKSPACE
 
-# Hair
-cd $ICJ_WORKSPACE/ironcladjustice-hair
-git add index.html && git commit -m "Design: [description]" && git push origin main
-
-# Depo
-cd $ICJ_WORKSPACE/ironcladjustice-depo
-git add index.html && git commit -m "Design: [description]" && git push origin main
+git add talcum/index.html hair/index.html depo/index.html
+git commit -m "Design: [description]"
+git push origin main
 ```
+
+One push deploys all changes simultaneously via `ironcladjustice-hub`.
 
 ### 3.3 Verify the live site
 
@@ -140,8 +142,8 @@ https://depo.ironcladjustice.com
 ```
 
 If the change isn't live after 2 minutes:
-1. Check the Vercel deployment at https://vercel.com/dashboard
-2. Click the project → Deployments tab → look for errors in the latest deployment
+1. Check https://vercel.com/dashboard → project `ironcladjustice-hub`
+2. Deployments tab → look for errors in the latest deployment
 3. Check Build Logs if build failed
 
 ---
@@ -153,7 +155,7 @@ If the change isn't live after 2 minutes:
 Since all pages are static HTML (no build step), build failures are rare. Most common causes:
 - File encoding issue (save as UTF-8)
 - Syntax error in a `<script>` block
-- Vercel project disconnected from GitHub (check Settings → Git in Vercel dashboard)
+- Vercel project disconnected from GitHub (check `ironcladjustice-hub` → Settings → Git in Vercel dashboard)
 
 ### Change not appearing live
 
@@ -176,25 +178,22 @@ curl -H "Authorization: Bearer ${VERCEL_TOKEN}" \
   "https://api.vercel.com/v9/domains/${DOMAIN}/config"
 ```
 
-**Fix — migrate domain from old to new project:**
+**Fix — migrate domain to hub:**
 ```bash
 export OLD_PROJECT="old-project-name"
-export NEW_PROJECT="ironcladjustice-talcum"
 
 # Step 1: Remove from old project
 curl -X DELETE \
   -H "Authorization: Bearer ${VERCEL_TOKEN}" \
   "https://api.vercel.com/v9/projects/${OLD_PROJECT}/domains/${DOMAIN}"
 
-# Step 2: Add to correct project
+# Step 2: Add to ironcladjustice-hub
 curl -X POST \
   -H "Authorization: Bearer ${VERCEL_TOKEN}" \
   -H "Content-Type: application/json" \
-  "https://api.vercel.com/v9/projects/${NEW_PROJECT}/domains" \
+  "https://api.vercel.com/v9/projects/ironcladjustice-hub/domains" \
   -d "{\"name\": \"${DOMAIN}\"}"
 ```
-
-> Special case: `ironcladjustice.com` root domain had a redirect rule in an old project (`ironcladlegal`). That redirect domain must be removed before `www` can be migrated. Always remove the root redirect before the `www` domain.
 
 ### Form not submitting / leads not appearing
 
@@ -242,9 +241,7 @@ grep -E "href=" $ICJ_WORKSPACE/index.html | grep -v "altrck4\|privacy\|terms\|#"
 
 ## Part 7 — Security Reminders
 
-- Generate new GitHub PAT and Vercel tokens for each deployment session
-- Revoke both tokens immediately after deployment is confirmed
+- Tokens are persistent in `projects/atum/.atum-credentials` — do NOT revoke between sessions (see OPERATIONS_SOP.md Phase 11)
 - Never commit tokens to the repository
 - Never store tokens in HTML files
-- GitHub PAT revocation: https://github.com/settings/tokens
-- Vercel token revocation: https://vercel.com/account/tokens
+- If a token must be rotated: update `.atum-credentials` immediately so the next session doesn't break

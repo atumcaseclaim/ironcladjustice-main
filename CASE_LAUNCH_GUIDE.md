@@ -17,7 +17,7 @@ Then read:
 - $ICJ_WORKSPACE/OPERATIONS_SOP.md
 - $ICJ_WORKSPACE/CASE_LAUNCH_GUIDE.md
 
-Also source ~/.atum/credentials to load API keys for this session.
+Also source projects/atum/.atum-credentials to load API keys for this session.
 
 Confirm you are ready to begin.
 ```
@@ -37,11 +37,9 @@ Do not begin a session until you have all of the following. Missing any item wil
 - [ ] **Buyer posting spec** — their endpoint URL, API key or auth method, their exact field names, what values they accept, and what a successful response looks like
 - [ ] **Buyer API key** — the key that goes in the POST body when sending leads to them
 
-### Credentials (you hold these — provide fresh each session)
-- [ ] **TrackDrive Developer Token** — from your TrackDrive account under Developer Tokens
-- [ ] **GitHub PAT** — only needed if the monorepo remote is not already authenticated locally. Check first — usually not needed.
-- [ ] **Vercel API Token** — generate at vercel.com/account/tokens, Full Account. Revoke after launch.
-- [ ] **Namecheap API Key** — already set up (`atumlegal` account). Just confirm your VPN is active before Claude calls the DNS API.
+### Credentials (persistent — in `.atum-credentials`)
+All tokens live in `projects/atum/.atum-credentials`. Claude sources them at session start. You only need to act if a value is blank or rotated.
+- [ ] **Namecheap/VPN** — confirm VPN is active before DNS step (whitelisted IP: `136.242.94.183`)
 
 ### Case Basics
 - [ ] **Case name** — human-readable (e.g., "Roundup Herbicide", "Camp Lejeune")
@@ -112,9 +110,9 @@ If you didn't provide an image, Claude presents 2–3 stock photo options with d
 
 ### STEP 6 — Vercel
 **Who does it:** Claude  
-**What happens:** Creates a new Vercel project linked to `ironcladjustice-main` with `rootDirectory` set to the new subdirectory, adds the subdomain, and triggers the first deployment.
+**What happens:** Adds the new case to the `SUBDOMAIN_MAP` in `middleware.js`, commits and pushes (triggering a redeploy of `ironcladjustice-hub`), then assigns the new subdomain to the hub project. No new Vercel project is created.
 
-**You provide:** Vercel API Token (at the start of session — used here)
+**You provide:** Nothing new — Vercel token already in `.atum-credentials`
 
 ---
 
@@ -154,14 +152,10 @@ DNS can take 5–30 minutes. Claude will check and report back.
 ---
 
 ### STEP 11 — Cleanup
-**Who does it:** You  
-**What happens:** Revoke the Vercel token (and GitHub PAT if one was used) — single-use per launch.
+**Who does it:** Claude confirms, you verify  
+**What happens:** All tokens (VERCEL_TOKEN, ATUM_GITHUB_TOKEN, TD_TOKEN) are persistent in `.atum-credentials` — do NOT revoke them. See OPERATIONS_SOP.md Phase 11.
 
-- Vercel token: vercel.com/account/tokens
-- GitHub PAT (if used): github.com/settings/tokens
-
-TrackDrive token: revoke after buyer is fully configured.  
-Namecheap key: no rotation needed (static whitelisted IP).
+The only cleanup needed: confirm the live page is correct and a test lead appears in TrackDrive.
 
 ---
 
@@ -217,9 +211,9 @@ mkdir -p ~/projects/atum/icj
 git clone https://github.com/atumcaseclaim/ironcladjustice-main.git \
   ~/projects/atum/icj/ironcladjustice-main
 
-# 3. Create credentials file
-mkdir -p ~/.atum && touch ~/.atum/credentials && chmod 600 ~/.atum/credentials
-# Fill in ~/.atum/credentials with current API keys (see template in repo or ask Rich)
+# 3. Credentials live in the shared file (already exists if other verticals are set up)
+# projects/atum/.atum-credentials  (gitignored — see projects/atum/.atum-credentials.example)
+# Fill in any blank values with current API keys (see template in repo or ask Rich)
 
 # 4. Verify
 ls ~/projects/atum/icj/ironcladjustice-main/

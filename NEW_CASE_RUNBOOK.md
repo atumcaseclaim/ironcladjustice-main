@@ -189,14 +189,14 @@ Once selected:
 export CASE="[case]"
 
 cp -r $ICJ_WORKSPACE/CASE_TEMPLATE \
-      $ICJ_WORKSPACE/ironcladjustice-${CASE}
+      $ICJ_WORKSPACE/${CASE}
 ```
 
 ---
 
 ## Step 2 — Fill In All Placeholders
 
-Open `$ICJ_WORKSPACE/ironcladjustice-${CASE}/index.html` and replace every `[BRACKET]` placeholder:
+Open `$ICJ_WORKSPACE/${CASE}/index.html` and replace every `[BRACKET]` placeholder:
 
 | Placeholder | What to Replace With |
 |-------------|----------------------|
@@ -215,7 +215,7 @@ Open `$ICJ_WORKSPACE/ironcladjustice-${CASE}/index.html` and replace every `[BRA
 
 **Verify no placeholders remain:**
 ```bash
-grep -n "\[" $ICJ_WORKSPACE/ironcladjustice-${CASE}/index.html
+grep -n "\[" $ICJ_WORKSPACE/${CASE}/index.html
 ```
 This should return zero results before proceeding.
 
@@ -228,10 +228,10 @@ Copy the case image into the images directory:
 ```bash
 # Image should be JPG, ~800x500px
 cp /path/to/your/image.jpg \
-   $ICJ_WORKSPACE/ironcladjustice-${CASE}/images/[CASE_IMAGE_FILENAME]
+   $ICJ_WORKSPACE/${CASE}/images/[CASE_IMAGE_FILENAME]
 ```
 
-> Note: If the Vercel project serves from the repo root, the image path `/images/filename.jpg` needs to be in the same repo. Alternatively, host images in the main repo and use an absolute URL.
+> Image refs in index.html must use relative paths (`./images/filename.jpg`), not root-relative (`/images/filename.jpg`). The CASE_TEMPLATE already uses the correct relative format.
 
 ---
 
@@ -240,7 +240,7 @@ cp /path/to/your/image.jpg \
 Open the file in a browser before committing:
 
 ```bash
-open $ICJ_WORKSPACE/ironcladjustice-${CASE}/index.html
+open $ICJ_WORKSPACE/${CASE}/index.html
 ```
 
 Check:
@@ -285,55 +285,52 @@ Step 6 (Push Code) is now part of Step 5. Proceed to Step 7.
 
 ---
 
-## Step 7 — Create Vercel Project
+## Step 7 — Register Case in Middleware
+
+All subdomains now route through `ironcladjustice-hub` via `middleware.js`. No new Vercel project is created per case.
+
+**7a — Add case to SUBDOMAIN_MAP in `middleware.js`:**
 
 ```bash
-curl -X POST \
-  -H "Authorization: Bearer ${VERCEL_TOKEN}" \
-  -H "Content-Type: application/json" \
-  https://api.vercel.com/v9/projects \
-  -d "{
-    \"name\": \"ironcladjustice-${CASE}\",
-    \"framework\": null,
-    \"rootDirectory\": \"${CASE}\",
-    \"gitRepository\": {
-      \"type\": \"github\",
-      \"repo\": \"atumcaseclaim/ironcladjustice-main\"
-    }
-  }"
+# Open middleware.js at repo root and add one line to SUBDOMAIN_MAP:
+# '[CASE]': '[CASE]',
+# Example for roundup:
+# 'roundup': 'roundup',
 ```
 
-> Save the project `id` from the response — you may need it for the domain assignment step.
+Commit and push:
+```bash
+cd $ICJ_WORKSPACE
+git add middleware.js
+git commit -m "feat(routing): add ${CASE} to middleware SUBDOMAIN_MAP"
+git push origin main
+```
+
+Push triggers auto-deploy of `ironcladjustice-hub`. Wait for READY before proceeding.
 
 ---
 
-## Step 8 — Add Custom Domain to Vercel Project
+## Step 8 — Add Custom Domain to Hub Project
 
 ```bash
-# Domain format: [case].ironcladjustice.com
 export SUBDOMAIN="${CASE}.ironcladjustice.com"
+export VERCEL_TEAM_ID="team_gUqkzG8sqjxTcnuOcXDAEM3L"
 
 curl -X POST \
   -H "Authorization: Bearer ${VERCEL_TOKEN}" \
   -H "Content-Type: application/json" \
-  "https://api.vercel.com/v9/projects/ironcladjustice-${CASE}/domains" \
+  "https://api.vercel.com/v9/projects/ironcladjustice-hub/domains" \
   -d "{\"name\": \"${SUBDOMAIN}\"}"
 ```
 
-**IMPORTANT — Domain Conflict Pitfall:**
-If the domain was previously assigned to another Vercel project (e.g., an old caseclaimnetwork project), you must remove it from the old project first:
+Check `"verified": true` in the response. If false, DNS hasn't propagated yet — Vercel will auto-verify once the CNAME resolves.
 
+**Domain conflict:** if the domain was previously assigned to another project, remove it first:
 ```bash
-# 1. Find which project currently owns the domain
-curl -H "Authorization: Bearer ${VERCEL_TOKEN}" \
-  "https://api.vercel.com/v9/domains/${SUBDOMAIN}/config"
-
-# 2. Remove from old project (replace OLD_PROJECT_NAME with actual name)
 curl -X DELETE \
   -H "Authorization: Bearer ${VERCEL_TOKEN}" \
   "https://api.vercel.com/v9/projects/OLD_PROJECT_NAME/domains/${SUBDOMAIN}"
-
-# 3. Then add to new project (re-run the POST above)
+# Then re-run the POST above
 ```
 
 ---

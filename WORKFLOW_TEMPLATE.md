@@ -15,11 +15,9 @@ Collect ALL of the following before starting. Missing any item = work does not b
 - [ ] **Subdomain slug** — lowercase, hyphen-separated (e.g., `wildfire`, `roundup`)
 - [ ] **Buyer spec doc** — endpoint URL, auth method (API key, Bearer, etc.), required field names, accepted values, response format (what does acceptance look like?)
 - [ ] **Image** — optional; if not provided I source 2-3 candidates from Unsplash/Pexels for your approval
-- [ ] **TrackDrive Developer Token** — from TrackDrive account → Developer Tokens
-- [ ] **GitHub PAT** — `repo` scope; revoke immediately after push confirms
-- [ ] **Vercel API Token** — Full Account scope; revoke after DNS resolves
-- [ ] **Namecheap API Key** — `atumlegal` account; VPN must be active when calling API
 - [ ] **VPN confirmed active** — check IP starts with `136.242.` before any Namecheap call
+
+**Credentials (ATUM_GITHUB_TOKEN, VERCEL_TOKEN, TD_TOKEN/TD_BASE, NC_USER/NC_KEY/NC_IP)** are stored persistently in `projects/atum/.atum-credentials` (gitignored, shared across all atum verticals — see `.atum-credentials.example`). Source it at session start: `source ../../.atum-credentials`. Do not ask Rich for these unless `.atum-credentials` is missing a value; if so, get it once and write it back.
 
 ### From Buyer
 - [ ] Buyer posting spec / integration doc
@@ -120,8 +118,8 @@ If image not provided by Rich:
 
 **Goal:** Complete HTML file with zero remaining placeholders.
 
-1. Copy `CASE_TEMPLATE/index.html` → `ironcladjustice-[slug]/index.html`
-2. Create `ironcladjustice-[slug]/images/` and place image as `[slug].jpg`
+1. Copy `CASE_TEMPLATE/index.html` → `[slug]/index.html`
+2. Create `[slug]/images/` and place image as `[slug].jpg`
 3. Replace all `[BRACKET]` placeholders:
 
 | Placeholder | Value |
@@ -183,40 +181,28 @@ git push origin main
 
 ---
 
-## Phase 6 — Vercel (Monorepo)
+## Phase 6 — Vercel (hub model — NO new project per case)
+
+All subdomains route through `ironcladjustice-hub` via `middleware.js`. Do not create per-case Vercel projects.
 
 ```bash
-VERCEL_TOKEN="[token]"
+VERCEL_TOKEN="${VERCEL_TOKEN}"   # from .atum-credentials
 TEAM_ID="team_gUqkzG8sqjxTcnuOcXDAEM3L"
 
-# Create project linked to monorepo with rootDirectory
-POST https://api.vercel.com/v9/projects?teamId=[TEAM_ID]
-{
-  "name": "ironcladjustice-[slug]",
-  "framework": null,
-  "rootDirectory": "[slug]",
-  "gitRepository": { "type": "github", "repo": "atumcaseclaim/ironcladjustice-main" }
-}
-# → Returns project.id
+# Step 1: Add case to SUBDOMAIN_MAP in middleware.js (repo root)
+# Add line: '[slug]': '[slug]',
+# Commit + push → ironcladjustice-hub auto-deploys via GitHub link
+git add middleware.js
+git commit -m "feat(routing): add [slug] to middleware SUBDOMAIN_MAP"
+git push origin main
+# Wait for ironcladjustice-hub deployment to reach READY before DNS step
 
-# Add domain
-POST https://api.vercel.com/v9/projects/[PROJECT_ID]/domains?teamId=[TEAM_ID]
+# Step 2: Add domain to hub project
+POST https://api.vercel.com/v9/projects/ironcladjustice-hub/domains?teamId=[TEAM_ID]
 { "name": "[slug].ironcladjustice.com" }
+# Check "verified": true — if false, DNS hasn't propagated yet (Vercel auto-verifies)
 
-# Trigger first deployment
-# 1. Get latest commit SHA: git rev-parse HEAD
-# 2. POST https://api.vercel.com/v13/deployments?teamId=[TEAM_ID]
-#    { "name": "ironcladjustice-[slug]",
-#      "project": "[PROJECT_ID]",
-#      "gitSource": { "type": "github", "org": "atumcaseclaim",
-#        "repo": "ironcladjustice-main", "ref": "main", "sha": "[SHA]" },
-#      "target": "production" }
-
-# ⚠️ After domain is added, check Vercel for the CNAME target
-# It will be a specific hash like: e37a2e4740c0478d.vercel-dns-017.com
-# DO NOT use the generic cname.vercel-dns.com — it will cause a DNS warning
-
-# Future pushes to ironcladjustice-main/[slug]/ auto-trigger redeploy — no manual step needed
+# ⚠️ CNAME target for Namecheap: cname.vercel-dns.com (hub project uses generic target)
 ```
 
 ---
@@ -226,9 +212,9 @@ POST https://api.vercel.com/v9/projects/[PROJECT_ID]/domains?teamId=[TEAM_ID]
 ⚠️ **VPN must be active** — API key is whitelisted to IP `136.242.94.183`
 
 ```bash
-NC_USER="${NC_USER}"        # set via ~/.atum/credentials
-NC_KEY="${NC_KEY}"          # set via ~/.atum/credentials
-NC_IP="${NC_IP}"            # set via ~/.atum/credentials
+NC_USER="${NC_USER}"        # set via projects/atum/.atum-credentials
+NC_KEY="${NC_KEY}"          # set via projects/atum/.atum-credentials
+NC_IP="${NC_IP}"            # set via projects/atum/.atum-credentials
 
 # Step 1: GET all existing records (NEVER SKIP)
 GET https://api.namecheap.com/xml.response
@@ -384,14 +370,18 @@ git push
 
 ---
 
-## Phase 12 — Token Cleanup
+## Phase 12 — Token Check
 
-| Token | Revoke At |
-|-------|-----------|
-| GitHub PAT | github.com/settings/tokens — revoke after push confirmed |
-| Vercel API Token | vercel.com/account/tokens — revoke after DNS resolves |
-| TrackDrive Dev Token | TrackDrive account → Developer Tokens — revoke after buyer configured |
-| Namecheap API Key | Retain (static whitelisted IP — no rotation needed unless IP changes) |
+All credentials are persistent in `projects/atum/.atum-credentials` (gitignored, shared across all atum verticals) and are **not** revoked between runs.
+
+| Variable | Source | Notes |
+|----------|--------|-------|
+| ATUM_GITHUB_TOKEN | github.com/settings/tokens | Scoped to ICJ + CCN repos (atumcaseclaim org) |
+| VERCEL_TOKEN / VERCEL_TEAM_ID | vercel.com/account/tokens | Team-scoped (NOT personal — hits SAML block) |
+| TD_TOKEN / TD_BASE | TrackDrive account (atum-legal) → Developer Tokens | atum-legal.trackdrive.com |
+| NC_USER / NC_KEY / NC_IP | atumlegal Namecheap account | Static whitelisted IP — re-fetch only if IP changes |
+
+If any value is blank in `.atum-credentials`, ask Rich for it once and persist it — do not ask again on future runs.
 
 ---
 
@@ -407,9 +397,8 @@ git push
 | TrackDrive | Webhook params | Use `outgoing_webhook_url_id` (the URL record ID, not webhook ID) |
 | TrackDrive | Filter operators | Only `==` and `!=`; multi-value OR = `values: ["a","b"]` with `==` |
 | TrackDrive | Filter values | Always `values: [...]` array — never the singular `value` field |
-| Vercel | CNAME target | Always use the specific hash CNAME from Vercel (not `cname.vercel-dns.com`) |
-| Vercel | Project creation | Use REST API — MCP has no create-project tool |
-| Vercel | New case project | Set `rootDirectory` at creation to the subdirectory name; link to `ironcladjustice-main` |
+| Vercel | CNAME target | Use `cname.vercel-dns.com` — hub project uses generic target (not a per-project hash) |
+| Vercel | New case | Add to `SUBDOMAIN_MAP` in `middleware.js` + POST domain to `ironcladjustice-hub` — no new project |
 | GitHub | New case | Add a subdirectory in `ironcladjustice-main` — no new repo needed |
 | Namecheap | setHosts | Replaces ALL records — always GET first, append, then SET full array |
 
@@ -440,7 +429,7 @@ After each phase, confirm before proceeding:
 | 3 (Image) | Image selected or confirmed |
 | 4 (Build) | Grep check returns zero `[BRACKET]` hits |
 | 5 (GitHub) | Subdirectory visible at github.com/atumcaseclaim/ironcladjustice-main/tree/main/[slug] |
-| 6 (Vercel) | Deployment state = READY; Vercel-specific CNAME noted |
+| 6 (Vercel) | middleware.js updated + pushed; ironcladjustice-hub deployment READY; domain added to hub |
 | 7 (DNS) | setHosts returns OK; re-GET confirms [slug] CNAME present; all previous records intact |
 | 8 (Verify) | Page live, geo headline working, test lead in TrackDrive |
 | 9 (Buyer) | Filter conditions verified — delete any probe/test records created during API exploration |

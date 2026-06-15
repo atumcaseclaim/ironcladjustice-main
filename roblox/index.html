@@ -66,7 +66,7 @@
                 <!-- Primary buyer qualifier (CAG: RobloxAbuse) -->
                 <div>
                     <label class="block text-sm font-medium mb-1">Were you or someone you love sexually abused or assaulted on Roblox? You may be entitled to compensation. <span class="text-red-500">*</span></label>
-                    <select name="RobloxAbuse" id="RobloxAbuse" required
+                    <select name="robloxabuse" id="RobloxAbuse" required
                             class="w-full px-4 py-3 border border-slate-300 rounded-xl focus:outline-none focus:border-yellow-500">
                         <option value="">-- Select one --</option>
                         <option value="Yes">Yes</option>
@@ -228,13 +228,16 @@
                     <textarea name="Comments" rows="3" class="w-full px-4 py-3 border border-slate-300 rounded-2xl focus:outline-none focus:border-yellow-500"></textarea>
                 </div>
 
-                <!-- TRACKDRIVE HIDDEN FIELDS — lead_token is a placeholder pending campaign manager / TrackDrive offer creation -->
-                <input type="hidden" name="lead_token" value="[LEAD_TOKEN]">
-                <input type="hidden" name="traffic_source_id" value="1">
+                <!-- TRACKDRIVE HIDDEN FIELDS -->
+                <input type="hidden" name="lead_token" value="c29d0c9e2f5b4cb68579dbe585d7fbb8">
+                <input type="hidden" name="traffic_source_id" value="1023">
                 <input type="hidden" name="campaign_name" value="roblox-abuse-claims">
                 <input type="hidden" name="affid" value="810">
                 <input type="hidden" name="ip_address" id="data_ip_address">
-                <input type="hidden" name="xxtrustedformcerturl" value="xxTrustedFormCertUrl">
+                <!-- mirrors: robloxabuse select → abuse_roblox field; caller_id → phone field -->
+                <input type="hidden" name="abuse_roblox" id="abuse_roblox_mirror">
+                <input type="hidden" name="phone" id="phone_mirror">
+                <input type="hidden" name="injury_roblox" value="Yes">
 
                 <!-- FROZEN: Submit button -->
                 <button type="submit"
@@ -442,6 +445,21 @@
         form.addEventListener('submit', async function(e) {
             e.preventDefault();
             let valid = true;
+
+            // Mirror fields TD requires under different names
+            const robloxAbuseVal = form.querySelector('[name="robloxabuse"]').value;
+            document.getElementById('abuse_roblox_mirror').value = robloxAbuseVal;
+            const callerVal = form.querySelector('[name="caller_id"]').value;
+            document.getElementById('phone_mirror').value = callerVal.replace(/\D/g, '');
+            // Sync TrustedForm cert URL (script injects camelCase; TD checks lowercase)
+            const tfCert = form.querySelector('[name="xxTrustedFormCertUrl"]');
+            if (tfCert && tfCert.value) {
+                const tfLower = form.querySelector('[name="xxtrustedformcerturl"]') || document.createElement('input');
+                tfLower.type = 'hidden';
+                tfLower.name = 'xxtrustedformcerturl';
+                tfLower.value = tfCert.value;
+                if (!form.querySelector('[name="xxtrustedformcerturl"]')) form.appendChild(tfLower);
+            }
 
             form.querySelectorAll('select[required]').forEach(function(sel) {
                 clearError(sel);

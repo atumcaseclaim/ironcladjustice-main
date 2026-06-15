@@ -63,10 +63,10 @@
 
                 <!-- ========== QUALIFYING QUESTIONS ========== -->
 
-                <!-- Primary buyer qualifier (CAG: RobloxAbuse) -->
+                <!-- Primary buyer qualifier -->
                 <div>
                     <label class="block text-sm font-medium mb-1">Were you or someone you love sexually abused or assaulted on Roblox? You may be entitled to compensation. <span class="text-red-500">*</span></label>
-                    <select name="robloxabuse" id="RobloxAbuse" required
+                    <select name="abuse_roblox" id="abuse_roblox" required
                             class="w-full px-4 py-3 border border-slate-300 rounded-xl focus:outline-none focus:border-yellow-500">
                         <option value="">-- Select one --</option>
                         <option value="Yes">Yes</option>
@@ -237,9 +237,7 @@
                 <input type="hidden" name="campaign_name" value="roblox-abuse-claims">
                 <input type="hidden" name="affid" value="810">
                 <input type="hidden" name="ip_address" id="data_ip_address">
-                <!-- mirrors: robloxabuse select → RobloxAbuse + abuse_roblox fields; caller_id → phone field -->
-                <input type="hidden" name="RobloxAbuse" id="abuse_roblox_mirror">
-                <input type="hidden" name="abuse_roblox" id="abuse_roblox_mirror2">
+                <!-- mirrors: caller_id → phone field -->
                 <input type="hidden" name="phone" id="phone_mirror">
                 <input type="hidden" name="injury_roblox" value="Yes">
 
@@ -450,10 +448,6 @@
             e.preventDefault();
             let valid = true;
 
-            // Mirror fields TD requires under different names
-            const robloxAbuseVal = form.querySelector('[name="robloxabuse"]').value;
-            document.getElementById('abuse_roblox_mirror').value = robloxAbuseVal;
-            document.getElementById('abuse_roblox_mirror2').value = robloxAbuseVal;
             const callerVal = form.querySelector('[name="caller_id"]').value;
             document.getElementById('phone_mirror').value = callerVal.replace(/\D/g, '');
             // Sync TrustedForm cert URL (script injects camelCase; TD checks lowercase)

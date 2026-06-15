@@ -154,7 +154,7 @@
                     <input type="tel" name="caller_id" required class="w-full px-4 py-3 border border-slate-300 rounded-xl focus:outline-none focus:border-yellow-500">
                 </div>
 
-                <!-- State (required by buyer; geo-restricted list — excludes IN, LA, TN per CAG campaign) -->
+                <!-- State — all states accepted; geo-filtering handled in TrackDrive per buyer criteria -->
                 <div>
                     <label class="block text-sm font-medium mb-1">State <span class="text-red-500">*</span></label>
                     <select name="state" id="state" required
@@ -174,9 +174,11 @@
                         <option value="HI">Hawaii</option>
                         <option value="ID">Idaho</option>
                         <option value="IL">Illinois</option>
+                        <option value="IN">Indiana</option>
                         <option value="IA">Iowa</option>
                         <option value="KS">Kansas</option>
                         <option value="KY">Kentucky</option>
+                        <option value="LA">Louisiana</option>
                         <option value="ME">Maine</option>
                         <option value="MD">Maryland</option>
                         <option value="MA">Massachusetts</option>
@@ -200,6 +202,7 @@
                         <option value="RI">Rhode Island</option>
                         <option value="SC">South Carolina</option>
                         <option value="SD">South Dakota</option>
+                        <option value="TN">Tennessee</option>
                         <option value="TX">Texas</option>
                         <option value="UT">Utah</option>
                         <option value="VT">Vermont</option>
@@ -234,8 +237,8 @@
                 <input type="hidden" name="campaign_name" value="roblox-abuse-claims">
                 <input type="hidden" name="affid" value="810">
                 <input type="hidden" name="ip_address" id="data_ip_address">
-                <!-- mirrors: robloxabuse select → abuse_roblox field; caller_id → phone field -->
-                <input type="hidden" name="abuse_roblox" id="abuse_roblox_mirror">
+                <!-- mirrors: robloxabuse select → RobloxAbuse field; caller_id → phone field -->
+                <input type="hidden" name="RobloxAbuse" id="abuse_roblox_mirror">
                 <input type="hidden" name="phone" id="phone_mirror">
                 <input type="hidden" name="injury_roblox" value="Yes">
 

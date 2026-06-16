@@ -360,7 +360,40 @@
       color: rgba(255,255,255,0.55);
     }
 
-    /* MOBILE */
+    /* HAMBURGER */
+
+    .hamburger {
+      display: none;
+      flex-direction: column;
+      gap: 5px;
+      cursor: pointer;
+      padding: 4px;
+      background: none;
+      border: none;
+    }
+
+    .hamburger span {
+      display: block;
+      width: 24px;
+      height: 2px;
+      background: white;
+      border-radius: 2px;
+      transition: 0.3s ease;
+    }
+
+    .hamburger.open span:nth-child(1) {
+      transform: translateY(7px) rotate(45deg);
+    }
+
+    .hamburger.open span:nth-child(2) {
+      opacity: 0;
+    }
+
+    .hamburger.open span:nth-child(3) {
+      transform: translateY(-7px) rotate(-45deg);
+    }
+
+    /* TABLET */
 
     @media(max-width: 900px) {
 
@@ -382,6 +415,138 @@
 
     }
 
+    /* MOBILE */
+
+    @media(max-width: 640px) {
+
+      /* Nav */
+      .hamburger {
+        display: flex;
+      }
+
+      .nav-links {
+        display: none;
+        position: absolute;
+        top: 100%;
+        left: 0;
+        right: 0;
+        background: rgba(15, 23, 42, 0.98);
+        flex-direction: column;
+        gap: 0;
+        padding: 16px 0;
+        border-top: 1px solid rgba(255,255,255,0.08);
+      }
+
+      .nav-links.open {
+        display: flex;
+      }
+
+      .nav-links a {
+        padding: 14px 24px;
+        font-size: 1rem;
+        border-bottom: 1px solid rgba(255,255,255,0.05);
+      }
+
+      .nav-links a:last-child {
+        border-bottom: none;
+      }
+
+      .nav-btn {
+        margin: 8px 24px 0;
+        text-align: center;
+        border-radius: 10px;
+        padding: 12px 18px;
+      }
+
+      /* Hero */
+      .hero {
+        padding: 70px 0 60px;
+      }
+
+      .hero h1 {
+        font-size: 2rem;
+        line-height: 1.15;
+      }
+
+      .hero p {
+        font-size: 1rem;
+      }
+
+      .hero-buttons {
+        flex-direction: column;
+        gap: 12px;
+      }
+
+      .btn-primary, .btn-secondary {
+        text-align: center;
+        padding: 14px 20px;
+      }
+
+      /* Trust bar */
+      .trust-items {
+        grid-template-columns: 1fr 1fr;
+        gap: 14px;
+      }
+
+      .trust-item {
+        font-size: 0.9rem;
+        padding: 10px;
+      }
+
+      /* Sections */
+      section {
+        padding: 60px 0;
+      }
+
+      .section-title {
+        margin-bottom: 36px;
+      }
+
+      .section-title h2 {
+        font-size: 1.75rem;
+      }
+
+      /* Cards */
+      .cases-grid {
+        grid-template-columns: 1fr;
+        gap: 20px;
+      }
+
+      .case-card {
+        padding: 24px;
+      }
+
+      /* Steps */
+      .steps {
+        grid-template-columns: 1fr;
+        gap: 20px;
+      }
+
+      .step {
+        padding: 24px;
+      }
+
+      /* CTA */
+      .cta-section {
+        padding: 60px 0;
+      }
+
+      .cta-section h2 {
+        font-size: 1.8rem;
+      }
+
+      /* Footer */
+      footer {
+        padding: 48px 0 24px;
+      }
+
+      .footer-grid {
+        grid-template-columns: 1fr;
+        gap: 28px;
+      }
+
+    }
+
   </style>
 
 </head>
@@ -394,12 +559,15 @@
         <div class="logo">
           Iron <span>Clad</span> Justice
         </div>
-        <div class="nav-links">
-          <a href="#cases">Cases</a>
-          <a href="#process">How It Works</a>
-          <a href="#faq">FAQ</a>
-          <a href="#footer">Contact</a>
-          <a class="nav-btn" href="#cases">Free Case Review</a>
+        <button class="hamburger" id="hamburger" aria-label="Toggle menu">
+          <span></span><span></span><span></span>
+        </button>
+        <div class="nav-links" id="nav-links">
+          <a href="#cases" class="nav-close">Cases</a>
+          <a href="#process" class="nav-close">How It Works</a>
+          <a href="#faq" class="nav-close">FAQ</a>
+          <a href="#footer" class="nav-close">Contact</a>
+          <a class="nav-btn nav-close" href="#cases">Free Case Review</a>
         </div>
       </div>
     </div>
@@ -708,6 +876,20 @@
     </div>
   </footer>
 
+<script>
+  const btn = document.getElementById('hamburger');
+  const nav = document.getElementById('nav-links');
+  btn.addEventListener('click', () => {
+    btn.classList.toggle('open');
+    nav.classList.toggle('open');
+  });
+  document.querySelectorAll('.nav-close').forEach(el => {
+    el.addEventListener('click', () => {
+      btn.classList.remove('open');
+      nav.classList.remove('open');
+    });
+  });
+</script>
 </body>
 </html>
 <!-- Force rebuild main: Tue May 12 02:22:09 MDT 2026 -->
